@@ -1,0 +1,60 @@
+openapi: 3.0.1
+info:
+  title: products-api
+  version: v1.0
+paths:
+  '/products':
+    get:
+      description: Get list of all products
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  '/products/{id}':
+    get:
+      description: Get specifit products by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the product
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Product'
+        '404':
+          description: 'Product not found'
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: 'Unexpected server error'
+          content:
+            application/json:
+              schema:
+                type: string
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: integer
