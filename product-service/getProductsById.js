@@ -1,19 +1,20 @@
-'use strict';
-
-import products from './products.json';
 import { headers } from './constants';
+import { client } from './db';
 
 export const getById = async event => {
+  console.log(event);
+
   try {
     const { pathParameters } = event;
-    const { id: requiredProductId } = pathParameters;
-    const product = products.find(({ id }) => id === (+requiredProductId));
+    const { id } = pathParameters;
+    const query = `select id, title, description, price, count from products left join stocks on products.id = stocks.product_id where products.id = $1`;
+    const { rows } = await client.query(query, [id]);
 
-    if (product) {
+    if (rows.length) {
       return {
         headers,
         statusCode: 200,
-        body: JSON.stringify(product),
+        body: JSON.stringify(rows[0]),
       };
     } else {
       return {
