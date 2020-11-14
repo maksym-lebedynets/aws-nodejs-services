@@ -48,3 +48,10 @@ functions:
             cors: true
             path: products/{id}
             method: get
+  - createProduct:
+      handler: createProduct.create
+      events:
+        - http:
+            cors: true
+            path: products
+            method: post
