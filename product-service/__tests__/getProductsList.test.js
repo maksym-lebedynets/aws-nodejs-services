@@ -1,5 +1,5 @@
 import { get } from '../getProductsList';
-import { headers } from '../constants';
+import { headers } from '../../constants';
 import products from '../products.json';
 
 describe('getProductsList', () => {

@@ -1,4 +1,4 @@
-import { headers } from './constants';
+import { headers } from '../constants';
 import { client } from './db';
 
 export const create = async (event) => {
