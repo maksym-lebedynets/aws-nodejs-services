@@ -17,6 +17,7 @@ export const createProducts = async (values) => {
     await client.query('COMMIT');
   } catch(error) {
     await client.query('ROLLBACK');
+    console.log(error);
     console.log('Product creation failed');
   }
 }

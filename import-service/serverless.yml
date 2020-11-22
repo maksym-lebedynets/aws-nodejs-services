@@ -98,10 +98,19 @@ resources:
       Type: "AWS::SNS::Topic"
       Properties:
         TopicName: "createProductTopic"
-    createProductSubscription:
+    createTabletProductSubscription:
       Type: "AWS::SNS::Subscription"
       Properties:
         Endpoint: "maksym_lebedynets@epam.com"
         Protocol: email
+        FilterPolicy: "{\"productType\": [\"tablet\"]}"
+        TopicArn:
+          Ref: createProductTopic
+    createLaptopProductSubscription:
+      Type: "AWS::SNS::Subscription"
+      Properties:
+        Endpoint: "delirious.max@gmail.com"
+        Protocol: email
+        FilterPolicy: "{\"productType\": [\"laptop\"]}"
         TopicArn:
           Ref: createProductTopic

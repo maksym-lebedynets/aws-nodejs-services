@@ -18,7 +18,7 @@ export const handler = async (event) => {
         MessageAttributes: {
           productType: {
             DataType: 'String',
-            StringValue: item.description
+            StringValue: item.description,
           },
         },
       }).promise();
