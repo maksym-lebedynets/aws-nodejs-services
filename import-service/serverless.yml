@@ -27,6 +27,10 @@ provider:
   region: eu-west-1
   environment:
     BUCKET: for-import
+    SQS_URL:
+      Ref: catalogItemsQueue
+    SNS_ARN:
+      Ref: createProductTopic
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -37,6 +41,14 @@ provider:
       Action: "s3:*"
       Resource:
         - "arn:aws:s3:::for-import/*"
+    - Effect: "Allow"
+      Action: "sqs:*"
+      Resource:
+        - Fn::GetAtt: [ catalogItemsQueue, Arn ]
+    - Effect: "Allow"
+      Action: "sns:*"
+      Resource:
+        Ref: createProductTopic
 
 plugins:
   - serverless-webpack
@@ -66,5 +78,39 @@ functions:
             rules:
               - prefix: uploaded/
             existing: true
+  - catalogBatchProcess:
+      handler: catalogBatchProcess.handler
+      events:
+        - sqs:
+            batchSize: 5
+            arn:
+              Fn::GetAtt:
+                - catalogItemsQueue
+                - Arn
 
-
+resources:
+  Resources:
+    catalogItemsQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "catalogItemsQueue"
+    createProductTopic:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        TopicName: "createProductTopic"
+    createTabletProductSubscription:
+      Type: "AWS::SNS::Subscription"
+      Properties:
+        Endpoint: "maksym_lebedynets@epam.com"
+        Protocol: email
+        FilterPolicy: "{\"productType\": [\"tablet\"]}"
+        TopicArn:
+          Ref: createProductTopic
+    createLaptopProductSubscription:
+      Type: "AWS::SNS::Subscription"
+      Properties:
+        Endpoint: "delirious.max@gmail.com"
+        Protocol: email
+        FilterPolicy: "{\"productType\": [\"laptop\"]}"
+        TopicArn:
+          Ref: createProductTopic
