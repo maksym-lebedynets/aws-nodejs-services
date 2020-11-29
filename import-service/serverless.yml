@@ -69,6 +69,10 @@ functions:
               parameters:
                 querystrings:
                   name: true
+            authorizer:
+              arn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:authorization-service-dev-basicAuthorizer"
+              identitySource: method.request.header.Authorization
+              type: token
   - importFileParser:
       handler: importFileParser.parse
       events:
@@ -114,3 +118,19 @@ resources:
         FilterPolicy: "{\"productType\": [\"laptop\"]}"
         TopicArn:
           Ref: createProductTopic
+    gatewayAccessDeniedResponses:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        RestApiId: !Ref ApiGatewayRestApi
+        ResponseType: ACCESS_DENIED
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+    gatewayUnauthorizedResponses:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        RestApiId: !Ref ApiGatewayRestApi
+        ResponseType: UNAUTHORIZED
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
