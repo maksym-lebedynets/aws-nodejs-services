@@ -12,6 +12,11 @@ module.exports.handler = (event, context, callback) => {
     console.log(userData);
 
     const password =  process.env[userData.name];
+
+    if (!password) {
+      callback('Unauthorized');
+    }
+
     const effect = password === userData.password ? 'Allow' : 'Deny';
 
     callback(null, generatePolicy(userData.name, effect, methodArn));
